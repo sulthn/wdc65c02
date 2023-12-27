@@ -1,15 +1,11 @@
-//============================================================================
-// Name        : mos6502
-// Author      : Gianluca Ghettini
-// Version     : 1.0
-// Copyright   :
-// Description : A MOS 6502 CPU emulator written in C++
-//============================================================================
+// http://6502.org/tutorials/65c02opcodes.html#8
+
 
 #pragma once
 #include <stdint.h>
+#include <string.h>
 
-class mos6502
+class wdc65c02
 {
 private:
     // register reset values
@@ -33,8 +29,8 @@ private:
 	// status register
 	uint8_t status;
 
-	typedef void (mos6502::*CodeExec)(uint16_t);
-	typedef uint16_t (mos6502::*AddrExec)();
+	typedef void (wdc65c02::*CodeExec)(uint16_t);
+	typedef uint16_t (wdc65c02::*AddrExec)();
 
 	struct Instr
 	{
@@ -49,25 +45,33 @@ private:
 
 	bool illegalOpcode;
 
-	// addressing modes
-	uint16_t Addr_ACC(); // ACCUMULATOR
-	uint16_t Addr_IMM(); // IMMEDIATE
-	uint16_t Addr_ABS(); // ABSOLUTE
-	uint16_t Addr_ZER(); // ZERO PAGE
-	uint16_t Addr_ZEX(); // INDEXED-X ZERO PAGE
-	uint16_t Addr_ZEY(); // INDEXED-Y ZERO PAGE
-	uint16_t Addr_ABX(); // INDEXED-X ABSOLUTE
-	uint16_t Addr_ABY(); // INDEXED-Y ABSOLUTE
-	uint16_t Addr_IMP(); // IMPLIED
-	uint16_t Addr_REL(); // RELATIVE
-	uint16_t Addr_INX(); // INDEXED-X INDIRECT
-	uint16_t Addr_INY(); // INDEXED-Y INDIRECT
-	uint16_t Addr_ABI(); // ABSOLUTE INDIRECT
+	// Addressing modes (Arranged according to datasheet)
+	uint16_t Addr_ABSOL(); // ABSOLUTE
+	uint16_t Addr_ABIXN(); // ABSOLUTE INDEXED-X INDIRECT
+	uint16_t Addr_ABSIX(); // ABSOLUTE INDEXED-X
+	uint16_t Addr_ABSIY(); // ABSOLUTE INDEXED-Y
+	uint16_t Addr_ABSIN(); // ABSOLUTE INDIRECT
+	uint16_t Addr_ACCUM(); // ACCUMULATOR
+	uint16_t Addr_IMMED(); // IMMEDIATE
+	uint16_t Addr_IMPLI(); // IMPLIED
+	uint16_t Addr_RELAT(); // RELATIVE
+	uint16_t Addr_ZEROP(); // ZERO PAGE
+	uint16_t Addr_ZPIXN(); // ZERO PAGE INDEXED-X INDIRECT
+	uint16_t Addr_ZRPIX(); // ZERO PAGE INDEXED-X
+	uint16_t Addr_ZRPIY(); // ZERO PAGE INDEXED-Y
+	uint16_t Addr_ZRPIN(); // ZERO PAGE INDIRECT
+	uint16_t Addr_ZPINY(); // ZERO PAGE INDIRECT INDEXED-Y
 
-	// opcodes (grouped as per datasheet)
+	uint16_t Addr_NOP5C(); // NOP 0x5C
+
+	// OpCodes (Arranged alphabetically)
 	void Op_ADC(uint16_t src);
 	void Op_AND(uint16_t src);
 	void Op_ASL(uint16_t src); 	void Op_ASL_ACC(uint16_t src);
+
+	void Op_BBR(uint16_t src);  // WDC65C02 INSTRUCTION
+	void Op_BBS(uint16_t src);  // WDC65C02 INSTRUCTION
+	
 	void Op_BCC(uint16_t src);
 	void Op_BCS(uint16_t src);
 
@@ -76,19 +80,19 @@ private:
 	void Op_BMI(uint16_t src);
 	void Op_BNE(uint16_t src);
 	void Op_BPL(uint16_t src);
-
+	void Op_BRA(uint16_t src);
 	void Op_BRK(uint16_t src);
+
 	void Op_BVC(uint16_t src);
 	void Op_BVS(uint16_t src);
 	void Op_CLC(uint16_t src);
 	void Op_CLD(uint16_t src);
-
 	void Op_CLI(uint16_t src);
 	void Op_CLV(uint16_t src);
 	void Op_CMP(uint16_t src);
+
 	void Op_CPX(uint16_t src);
 	void Op_CPY(uint16_t src);
-
 	void Op_DEC(uint16_t src);
 	void Op_DEX(uint16_t src);
 	void Op_DEY(uint16_t src);
@@ -100,39 +104,48 @@ private:
 	void Op_JMP(uint16_t src);
 	void Op_JSR(uint16_t src);
 	void Op_LDA(uint16_t src);
-
 	void Op_LDX(uint16_t src);
 	void Op_LDY(uint16_t src);
+
 	void Op_LSR(uint16_t src); 	void Op_LSR_ACC(uint16_t src);
 	void Op_NOP(uint16_t src);
 	void Op_ORA(uint16_t src);
-
 	void Op_PHA(uint16_t src);
 	void Op_PHP(uint16_t src);
+	void Op_PHX(uint16_t src);
+	void Op_PHY(uint16_t src);
+
 	void Op_PLA(uint16_t src);
 	void Op_PLP(uint16_t src);
+	void Op_PLX(uint16_t src);
+	void Op_PLY(uint16_t src);
+	void Op_RMB(uint16_t src);
 	void Op_ROL(uint16_t src); 	void Op_ROL_ACC(uint16_t src);
-
 	void Op_ROR(uint16_t src);	void Op_ROR_ACC(uint16_t src);
+	
 	void Op_RTI(uint16_t src);
 	void Op_RTS(uint16_t src);
 	void Op_SBC(uint16_t src);
 	void Op_SEC(uint16_t src);
 	void Op_SED(uint16_t src);
-
 	void Op_SEI(uint16_t src);
+	void Op_SMB(uint16_t src);
+
 	void Op_STA(uint16_t src);
+	void Op_STP(uint16_t src);
 	void Op_STX(uint16_t src);
 	void Op_STY(uint16_t src);
+	void Op_STZ(uint16_t src);
 	void Op_TAX(uint16_t src);
-
 	void Op_TAY(uint16_t src);
+
+	void Op_TRB(uint16_t src);
+	void Op_TSB(uint16_t src);
 	void Op_TSX(uint16_t src);
 	void Op_TXA(uint16_t src);
 	void Op_TXS(uint16_t src);
 	void Op_TYA(uint16_t src);
-
-	void Op_ILLEGAL(uint16_t src);
+	void Op_WAI(uint16_t src);
 
 	// IRQ, reset, NMI vectors
 	static const uint16_t irqVectorH = 0xFFFF;
@@ -157,7 +170,7 @@ public:
 		INST_COUNT,
 		CYCLE_COUNT,
 	};
-	mos6502(BusRead r, BusWrite w);
+	wdc65c02(BusRead r, BusWrite w);
 	void NMI();
 	void IRQ();
 	void Reset();
