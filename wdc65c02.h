@@ -1,6 +1,3 @@
-// http://6502.org/tutorials/65c02opcodes.html#8
-
-
 #pragma once
 #include <stdint.h>
 #include <string.h>
@@ -61,8 +58,6 @@ private:
 	uint16_t Addr_ZRPIY(); // ZERO PAGE INDEXED-Y
 	uint16_t Addr_ZRPIN(); // ZERO PAGE INDIRECT
 	uint16_t Addr_ZPINY(); // ZERO PAGE INDIRECT INDEXED-Y
-
-	uint16_t Addr_NOP5C(); // NOP 0x5C
 
 	// OpCodes (Arranged alphabetically)
 	void Op_ADC(uint16_t src);
@@ -178,16 +173,14 @@ public:
 		int32_t cycles,
 		uint64_t& cycleCount,
 		CycleMethod cycleMethod = CYCLE_COUNT);
-	void RunEternally(); // until it encounters a illegal opcode
-						 // useful when running e.g. WOZ Monitor
-						 // no need to worry about cycle exhaus-
-						 // tion
+
     uint16_t GetPC();
     uint8_t GetS();
     uint8_t GetP();
     uint8_t GetA();
     uint8_t GetX();
     uint8_t GetY();
+
     void SetResetS(uint8_t value);
     void SetResetP(uint8_t value);
     void SetResetA(uint8_t value);

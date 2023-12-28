@@ -113,5 +113,11 @@ http://www.mdawson.net/vic20chrome/cpu/mos_6500_mpu_preliminary_may_1976.pdf
 
 http://rubbermallet.org/fake6502.c
 
+## Links i added ##
+
+http://6502.org/tutorials/65c02opcodes.html#8
+
+https://www.westerndesigncenter.com/wdc/documentation/w65c02s.pdf
+
 
 

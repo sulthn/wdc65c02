@@ -55,30 +55,10 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 
 	// insert opcodes
 
-	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_ADC;
-	instr.cycles = 2;
-	InstrTable[0x69] = instr;
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_ADC;
 	instr.cycles = 4;
 	InstrTable[0x6D] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_ADC;
-	instr.cycles = 3;
-	InstrTable[0x65] = instr;
-	instr.addr = &wdc65c02::Addr_ZPIXN;
-	instr.code = &wdc65c02::Op_ADC;
-	instr.cycles = 6;
-	InstrTable[0x61] = instr;
-	instr.addr = &wdc65c02::Addr_ZPINY;
-	instr.code = &wdc65c02::Op_ADC;
-	instr.cycles = 6;
-	InstrTable[0x71] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_ADC;
-	instr.cycles = 4;
-	InstrTable[0x75] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_ADC;
 	instr.cycles = 4;
@@ -87,31 +67,31 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_ADC;
 	instr.cycles = 4;
 	InstrTable[0x79] = instr;
-
 	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_AND;
+	instr.code = &wdc65c02::Op_ADC;
 	instr.cycles = 2;
-	InstrTable[0x29] = instr;
+	InstrTable[0x69] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_ADC;
+	instr.cycles = 3;
+	InstrTable[0x65] = instr;
+	instr.addr = &wdc65c02::Addr_ZPIXN;
+	instr.code = &wdc65c02::Op_ADC;
+	instr.cycles = 6;
+	InstrTable[0x61] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_ADC;
+	instr.cycles = 4;
+	InstrTable[0x75] = instr;
+	instr.addr = &wdc65c02::Addr_ZPINY;
+	instr.code = &wdc65c02::Op_ADC;
+	instr.cycles = 6;
+	InstrTable[0x71] = instr;
+
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_AND;
 	instr.cycles = 4;
 	InstrTable[0x2D] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_AND;
-	instr.cycles = 3;
-	InstrTable[0x25] = instr;
-	instr.addr = &wdc65c02::Addr_ZPIXN;
-	instr.code = &wdc65c02::Op_AND;
-	instr.cycles = 6;
-	InstrTable[0x21] = instr;
-	instr.addr = &wdc65c02::Addr_ZPINY;
-	instr.code = &wdc65c02::Op_AND;
-	instr.cycles = 5;
-	InstrTable[0x31] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_AND;
-	instr.cycles = 4;
-	InstrTable[0x35] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_AND;
 	instr.cycles = 4;
@@ -120,27 +100,47 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_AND;
 	instr.cycles = 4;
 	InstrTable[0x39] = instr;
+	instr.addr = &wdc65c02::Addr_IMMED;
+	instr.code = &wdc65c02::Op_AND;
+	instr.cycles = 2;
+	InstrTable[0x29] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_AND;
+	instr.cycles = 3;
+	InstrTable[0x25] = instr;
+	instr.addr = &wdc65c02::Addr_ZPIXN;
+	instr.code = &wdc65c02::Op_AND;
+	instr.cycles = 6;
+	InstrTable[0x21] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_AND;
+	instr.cycles = 4;
+	InstrTable[0x35] = instr;
+	instr.addr = &wdc65c02::Addr_ZPINY;
+	instr.code = &wdc65c02::Op_AND;
+	instr.cycles = 5;
+	InstrTable[0x31] = instr;
 
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_ASL;
 	instr.cycles = 6;
 	InstrTable[0x0E] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_ASL;
-	instr.cycles = 5;
-	InstrTable[0x06] = instr;
-	instr.addr = &wdc65c02::Addr_ACCUM;
-	instr.code = &wdc65c02::Op_ASL_ACC;
-	instr.cycles = 2;
-	InstrTable[0x0A] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_ASL;
-	instr.cycles = 6;
-	InstrTable[0x16] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_ASL;
 	instr.cycles = 7;
 	InstrTable[0x1E] = instr;
+	instr.addr = &wdc65c02::Addr_ACCUM;
+	instr.code = &wdc65c02::Op_ASL_ACC;
+	instr.cycles = 2;
+	InstrTable[0x0A] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_ASL;
+	instr.cycles = 5;
+	InstrTable[0x06] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_ASL;
+	instr.cycles = 6;
+	InstrTable[0x16] = instr;
 
 	instr.addr = &wdc65c02::Addr_RELAT;
 	instr.code = &wdc65c02::Op_BCC;
@@ -216,30 +216,10 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.cycles = 2;
 	InstrTable[0xB8] = instr;
 
-	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_CMP;
-	instr.cycles = 2;
-	InstrTable[0xC9] = instr;
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_CMP;
 	instr.cycles = 4;
 	InstrTable[0xCD] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_CMP;
-	instr.cycles = 3;
-	InstrTable[0xC5] = instr;
-	instr.addr = &wdc65c02::Addr_ZPIXN;
-	instr.code = &wdc65c02::Op_CMP;
-	instr.cycles = 6;
-	InstrTable[0xC1] = instr;
-	instr.addr = &wdc65c02::Addr_ZPINY;
-	instr.code = &wdc65c02::Op_CMP;
-	instr.cycles = 3;
-	InstrTable[0xD1] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_CMP;
-	instr.cycles = 4;
-	InstrTable[0xD5] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_CMP;
 	instr.cycles = 4;
@@ -248,28 +228,48 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_CMP;
 	instr.cycles = 4;
 	InstrTable[0xD9] = instr;
-
 	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_CPX;
+	instr.code = &wdc65c02::Op_CMP;
 	instr.cycles = 2;
-	InstrTable[0xE0] = instr;
+	InstrTable[0xC9] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_CMP;
+	instr.cycles = 3;
+	InstrTable[0xC5] = instr;
+	instr.addr = &wdc65c02::Addr_ZPIXN;
+	instr.code = &wdc65c02::Op_CMP;
+	instr.cycles = 6;
+	InstrTable[0xC1] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_CMP;
+	instr.cycles = 4;
+	InstrTable[0xD5] = instr;
+	instr.addr = &wdc65c02::Addr_ZPINY;
+	instr.code = &wdc65c02::Op_CMP;
+	instr.cycles = 3;
+	InstrTable[0xD1] = instr;
+
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_CPX;
 	instr.cycles = 4;
 	InstrTable[0xEC] = instr;
+	instr.addr = &wdc65c02::Addr_IMMED;
+	instr.code = &wdc65c02::Op_CPX;
+	instr.cycles = 2;
+	InstrTable[0xE0] = instr;
 	instr.addr = &wdc65c02::Addr_ZEROP;
 	instr.code = &wdc65c02::Op_CPX;
 	instr.cycles = 3;
 	InstrTable[0xE4] = instr;
 
-	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_CPY;
-	instr.cycles = 2;
-	InstrTable[0xC0] = instr;
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_CPY;
 	instr.cycles = 4;
 	InstrTable[0xCC] = instr;
+	instr.addr = &wdc65c02::Addr_IMMED;
+	instr.code = &wdc65c02::Op_CPY;
+	instr.cycles = 2;
+	InstrTable[0xC0] = instr;
 	instr.addr = &wdc65c02::Addr_ZEROP;
 	instr.code = &wdc65c02::Op_CPY;
 	instr.cycles = 3;
@@ -279,6 +279,10 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_DEC;
 	instr.cycles = 6;
 	InstrTable[0xCE] = instr;
+	instr.addr = &wdc65c02::Addr_ABSIX;
+	instr.code = &wdc65c02::Op_DEC;
+	instr.cycles = 7;
+	InstrTable[0xDE] = instr;
 	instr.addr = &wdc65c02::Addr_ZEROP;
 	instr.code = &wdc65c02::Op_DEC;
 	instr.cycles = 5;
@@ -287,10 +291,6 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_DEC;
 	instr.cycles = 6;
 	InstrTable[0xD6] = instr;
-	instr.addr = &wdc65c02::Addr_ABSIX;
-	instr.code = &wdc65c02::Op_DEC;
-	instr.cycles = 7;
-	InstrTable[0xDE] = instr;
 
 	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.code = &wdc65c02::Op_DEX;
@@ -302,30 +302,10 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.cycles = 2;
 	InstrTable[0x88] = instr;
 
-	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_EOR;
-	instr.cycles = 2;
-	InstrTable[0x49] = instr;
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_EOR;
 	instr.cycles = 4;
 	InstrTable[0x4D] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_EOR;
-	instr.cycles = 3;
-	InstrTable[0x45] = instr;
-	instr.addr = &wdc65c02::Addr_ZPIXN;
-	instr.code = &wdc65c02::Op_EOR;
-	instr.cycles = 6;
-	InstrTable[0x41] = instr;
-	instr.addr = &wdc65c02::Addr_ZPINY;
-	instr.code = &wdc65c02::Op_EOR;
-	instr.cycles = 5;
-	InstrTable[0x51] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_EOR;
-	instr.cycles = 4;
-	InstrTable[0x55] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_EOR;
 	instr.cycles = 4;
@@ -334,11 +314,35 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_EOR;
 	instr.cycles = 4;
 	InstrTable[0x59] = instr;
+	instr.addr = &wdc65c02::Addr_IMMED;
+	instr.code = &wdc65c02::Op_EOR;
+	instr.cycles = 2;
+	InstrTable[0x49] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_EOR;
+	instr.cycles = 3;
+	InstrTable[0x45] = instr;
+	instr.addr = &wdc65c02::Addr_ZPIXN;
+	instr.code = &wdc65c02::Op_EOR;
+	instr.cycles = 6;
+	InstrTable[0x41] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_EOR;
+	instr.cycles = 4;
+	InstrTable[0x55] = instr;
+	instr.addr = &wdc65c02::Addr_ZPINY;
+	instr.code = &wdc65c02::Op_EOR;
+	instr.cycles = 5;
+	InstrTable[0x51] = instr;
 
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_INC;
 	instr.cycles = 6;
 	InstrTable[0xEE] = instr;
+	instr.addr = &wdc65c02::Addr_ABSIX;
+	instr.code = &wdc65c02::Op_INC;
+	instr.cycles = 7;
+	InstrTable[0xFE] = instr;
 	instr.addr = &wdc65c02::Addr_ZEROP;
 	instr.code = &wdc65c02::Op_INC;
 	instr.cycles = 5;
@@ -347,10 +351,6 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_INC;
 	instr.cycles = 6;
 	InstrTable[0xF6] = instr;
-	instr.addr = &wdc65c02::Addr_ABSIX;
-	instr.code = &wdc65c02::Op_INC;
-	instr.cycles = 7;
-	InstrTable[0xFE] = instr;
 
 	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.code = &wdc65c02::Op_INX;
@@ -376,30 +376,10 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.cycles = 6;
 	InstrTable[0x20] = instr;
 
-	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_LDA;
-	instr.cycles = 2;
-	InstrTable[0xA9] = instr;
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_LDA;
 	instr.cycles = 4;
 	InstrTable[0xAD] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_LDA;
-	instr.cycles = 3;
-	InstrTable[0xA5] = instr;
-	instr.addr = &wdc65c02::Addr_ZPIXN;
-	instr.code = &wdc65c02::Op_LDA;
-	instr.cycles = 6;
-	InstrTable[0xA1] = instr;
-	instr.addr = &wdc65c02::Addr_ZPINY;
-	instr.code = &wdc65c02::Op_LDA;
-	instr.cycles = 5;
-	InstrTable[0xB1] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_LDA;
-	instr.cycles = 4;
-	InstrTable[0xB5] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_LDA;
 	instr.cycles = 4;
@@ -408,36 +388,60 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_LDA;
 	instr.cycles = 4;
 	InstrTable[0xB9] = instr;
-
 	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_LDX;
+	instr.code = &wdc65c02::Op_LDA;
 	instr.cycles = 2;
-	InstrTable[0xA2] = instr;
+	InstrTable[0xA9] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_LDA;
+	instr.cycles = 3;
+	InstrTable[0xA5] = instr;
+	instr.addr = &wdc65c02::Addr_ZPIXN;
+	instr.code = &wdc65c02::Op_LDA;
+	instr.cycles = 6;
+	InstrTable[0xA1] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_LDA;
+	instr.cycles = 4;
+	InstrTable[0xB5] = instr;
+	instr.addr = &wdc65c02::Addr_ZPINY;
+	instr.code = &wdc65c02::Op_LDA;
+	instr.cycles = 5;
+	InstrTable[0xB1] = instr;
+
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_LDX;
 	instr.cycles = 4;
 	InstrTable[0xAE] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_LDX;
-	instr.cycles = 3;
-	InstrTable[0xA6] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIY;
 	instr.code = &wdc65c02::Op_LDX;
 	instr.cycles = 4;
 	InstrTable[0xBE] = instr;
+	instr.addr = &wdc65c02::Addr_IMMED;
+	instr.code = &wdc65c02::Op_LDX;
+	instr.cycles = 2;
+	InstrTable[0xA2] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_LDX;
+	instr.cycles = 3;
+	InstrTable[0xA6] = instr;
 	instr.addr = &wdc65c02::Addr_ZRPIY;
 	instr.code = &wdc65c02::Op_LDX;
 	instr.cycles = 4;
 	InstrTable[0xB6] = instr;
 
-	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_LDY;
-	instr.cycles = 2;
-	InstrTable[0xA0] = instr;
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_LDY;
 	instr.cycles = 4;
 	InstrTable[0xAC] = instr;
+	instr.addr = &wdc65c02::Addr_ABSIX;
+	instr.code = &wdc65c02::Op_LDY;
+	instr.cycles = 4;
+	InstrTable[0xBC] = instr;
+	instr.addr = &wdc65c02::Addr_IMMED;
+	instr.code = &wdc65c02::Op_LDY;
+	instr.cycles = 2;
+	InstrTable[0xA0] = instr;
 	instr.addr = &wdc65c02::Addr_ZEROP;
 	instr.code = &wdc65c02::Op_LDY;
 	instr.cycles = 3;
@@ -446,61 +450,37 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_LDY;
 	instr.cycles = 4;
 	InstrTable[0xB4] = instr;
-	instr.addr = &wdc65c02::Addr_ABSIX;
-	instr.code = &wdc65c02::Op_LDY;
-	instr.cycles = 4;
-	InstrTable[0xBC] = instr;
 
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_LSR;
 	instr.cycles = 6;
 	InstrTable[0x4E] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_LSR;
-	instr.cycles = 5;
-	InstrTable[0x46] = instr;
-	instr.addr = &wdc65c02::Addr_ACCUM;
-	instr.code = &wdc65c02::Op_LSR_ACC;
-	instr.cycles = 2;
-	InstrTable[0x4A] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_LSR;
-	instr.cycles = 6;
-	InstrTable[0x56] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_LSR;
 	instr.cycles = 7;
 	InstrTable[0x5E] = instr;
+	instr.addr = &wdc65c02::Addr_ACCUM;
+	instr.code = &wdc65c02::Op_LSR_ACC;
+	instr.cycles = 2;
+	InstrTable[0x4A] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_LSR;
+	instr.cycles = 5;
+	InstrTable[0x46] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_LSR;
+	instr.cycles = 6;
+	InstrTable[0x56] = instr;
 
 	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.code = &wdc65c02::Op_NOP;
 	instr.cycles = 2;
 	InstrTable[0xEA] = instr;
 
-	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_ORA;
-	instr.cycles = 2;
-	InstrTable[0x09] = instr;
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_ORA;
 	instr.cycles = 4;
 	InstrTable[0x0D] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_ORA;
-	instr.cycles = 3;
-	InstrTable[0x05] = instr;
-	instr.addr = &wdc65c02::Addr_ZPIXN;
-	instr.code = &wdc65c02::Op_ORA;
-	instr.cycles = 6;
-	InstrTable[0x01] = instr;
-	instr.addr = &wdc65c02::Addr_ZPINY;
-	instr.code = &wdc65c02::Op_ORA;
-	instr.cycles = 5;
-	InstrTable[0x11] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_ORA;
-	instr.cycles = 4;
-	InstrTable[0x15] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_ORA;
 	instr.cycles = 4;
@@ -509,6 +489,26 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_ORA;
 	instr.cycles = 4;
 	InstrTable[0x19] = instr;
+	instr.addr = &wdc65c02::Addr_IMMED;
+	instr.code = &wdc65c02::Op_ORA;
+	instr.cycles = 2;
+	InstrTable[0x09] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_ORA;
+	instr.cycles = 3;
+	InstrTable[0x05] = instr;
+	instr.addr = &wdc65c02::Addr_ZPIXN;
+	instr.code = &wdc65c02::Op_ORA;
+	instr.cycles = 6;
+	InstrTable[0x01] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_ORA;
+	instr.cycles = 4;
+	InstrTable[0x15] = instr;
+	instr.addr = &wdc65c02::Addr_ZPINY;
+	instr.code = &wdc65c02::Op_ORA;
+	instr.cycles = 5;
+	InstrTable[0x11] = instr;
 
 	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.code = &wdc65c02::Op_PHA;
@@ -534,43 +534,43 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_ROL;
 	instr.cycles = 6;
 	InstrTable[0x2E] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_ROL;
-	instr.cycles = 5;
-	InstrTable[0x26] = instr;
-	instr.addr = &wdc65c02::Addr_ACCUM;
-	instr.code = &wdc65c02::Op_ROL_ACC;
-	instr.cycles = 2;
-	InstrTable[0x2A] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_ROL;
-	instr.cycles = 6;
-	InstrTable[0x36] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_ROL;
 	instr.cycles = 7;
 	InstrTable[0x3E] = instr;
+	instr.addr = &wdc65c02::Addr_ACCUM;
+	instr.code = &wdc65c02::Op_ROL_ACC;
+	instr.cycles = 2;
+	InstrTable[0x2A] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_ROL;
+	instr.cycles = 5;
+	InstrTable[0x26] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_ROL;
+	instr.cycles = 6;
+	InstrTable[0x36] = instr;
 
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_ROR;
 	instr.cycles = 6;
 	InstrTable[0x6E] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_ROR;
-	instr.cycles = 5;
-	InstrTable[0x66] = instr;
-	instr.addr = &wdc65c02::Addr_ACCUM;
-	instr.code = &wdc65c02::Op_ROR_ACC;
-	instr.cycles = 2;
-	InstrTable[0x6A] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_ROR;
-	instr.cycles = 6;
-	InstrTable[0x76] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_ROR;
 	instr.cycles = 7;
 	InstrTable[0x7E] = instr;
+	instr.addr = &wdc65c02::Addr_ACCUM;
+	instr.code = &wdc65c02::Op_ROR_ACC;
+	instr.cycles = 2;
+	InstrTable[0x6A] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_ROR;
+	instr.cycles = 5;
+	InstrTable[0x66] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_ROR;
+	instr.cycles = 6;
+	InstrTable[0x76] = instr;
 
 	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.code = &wdc65c02::Op_RTI;
@@ -582,30 +582,10 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.cycles = 6;
 	InstrTable[0x60] = instr;
 
-	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_SBC;
-	instr.cycles = 2;
-	InstrTable[0xE9] = instr;
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_SBC;
 	instr.cycles = 4;
 	InstrTable[0xED] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_SBC;
-	instr.cycles = 3;
-	InstrTable[0xE5] = instr;
-	instr.addr = &wdc65c02::Addr_ZPIXN;
-	instr.code = &wdc65c02::Op_SBC;
-	instr.cycles = 6;
-	InstrTable[0xE1] = instr;
-	instr.addr = &wdc65c02::Addr_ZPINY;
-	instr.code = &wdc65c02::Op_SBC;
-	instr.cycles = 5;
-	InstrTable[0xF1] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_SBC;
-	instr.cycles = 4;
-	InstrTable[0xF5] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_SBC;
 	instr.cycles = 4;
@@ -614,6 +594,26 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_SBC;
 	instr.cycles = 4;
 	InstrTable[0xF9] = instr;
+	instr.addr = &wdc65c02::Addr_IMMED;
+	instr.code = &wdc65c02::Op_SBC;
+	instr.cycles = 2;
+	InstrTable[0xE9] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_SBC;
+	instr.cycles = 3;
+	InstrTable[0xE5] = instr;
+	instr.addr = &wdc65c02::Addr_ZPIXN;
+	instr.code = &wdc65c02::Op_SBC;
+	instr.cycles = 6;
+	InstrTable[0xE1] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_SBC;
+	instr.cycles = 4;
+	InstrTable[0xF5] = instr;
+	instr.addr = &wdc65c02::Addr_ZPINY;
+	instr.code = &wdc65c02::Op_SBC;
+	instr.cycles = 5;
+	InstrTable[0xF1] = instr;
 
 	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.code = &wdc65c02::Op_SEC;
@@ -634,22 +634,6 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_STA;
 	instr.cycles = 4;
 	InstrTable[0x8D] = instr;
-	instr.addr = &wdc65c02::Addr_ZEROP;
-	instr.code = &wdc65c02::Op_STA;
-	instr.cycles = 3;
-	InstrTable[0x85] = instr;
-	instr.addr = &wdc65c02::Addr_ZPIXN;
-	instr.code = &wdc65c02::Op_STA;
-	instr.cycles = 6;
-	InstrTable[0x81] = instr;
-	instr.addr = &wdc65c02::Addr_ZPINY;
-	instr.code = &wdc65c02::Op_STA;
-	instr.cycles = 6;
-	InstrTable[0x91] = instr;
-	instr.addr = &wdc65c02::Addr_ZRPIX;
-	instr.code = &wdc65c02::Op_STA;
-	instr.cycles = 4;
-	InstrTable[0x95] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_STA;
 	instr.cycles = 5;
@@ -658,6 +642,22 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_STA;
 	instr.cycles = 5;
 	InstrTable[0x99] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_STA;
+	instr.cycles = 3;
+	InstrTable[0x85] = instr;
+	instr.addr = &wdc65c02::Addr_ZPIXN;
+	instr.code = &wdc65c02::Op_STA;
+	instr.cycles = 6;
+	InstrTable[0x81] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_STA;
+	instr.cycles = 4;
+	InstrTable[0x95] = instr;
+	instr.addr = &wdc65c02::Addr_ZPINY;
+	instr.code = &wdc65c02::Op_STA;
+	instr.cycles = 6;
+	InstrTable[0x91] = instr;
 
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_STX;
@@ -709,11 +709,6 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_TXS;
 	instr.cycles = 2;
 	InstrTable[0x9A] = instr;
-
-	instr.addr = &wdc65c02::Addr_IMPLI;
-	instr.code = &wdc65c02::Op_TYA;
-	instr.cycles = 2;
-	InstrTable[0x98] = instr;
 
 	return;
 }
@@ -810,24 +805,6 @@ void wdc65c02::Run(
 		cyclesRemaining -=
 			cycleMethod == CYCLE_COUNT        ? instr.cycles
 			/* cycleMethod == INST_COUNT */   : 1;
-	}
-}
-
-void wdc65c02::RunEternally()
-{
-	uint8_t opcode;
-	Instr instr;
-
-	while(!illegalOpcode)
-	{
-		// fetch
-		opcode = Read(pc++);
-
-		// decode
-		instr = InstrTable[opcode];
-
-		// execute
-		Exec(instr);
 	}
 }
 
@@ -936,7 +913,21 @@ uint16_t wdc65c02::Addr_ABSOL()
 
 uint16_t wdc65c02::Addr_ABIXN()
 {
+	uint16_t addrL;
+	uint16_t addrH;
+	uint16_t effL;
+	uint16_t effH;
+	uint16_t abs;
+	uint16_t addr;
 
+	addrL = Read(pc++);
+	addrH = Read(pc++);
+	abs = ((addrH << 8) | addrL) + X;
+
+	effL = Read(abs);
+	effH = Read(abs + 1);
+	addr = effL + (effH << 8);
+	return addr;
 }
 
 uint16_t wdc65c02::Addr_ABSIX()
@@ -976,19 +967,12 @@ uint16_t wdc65c02::Addr_ABSIN()
 
 	addrL = Read(pc++);
 	addrH = Read(pc++);
-
 	abs = (addrH << 8) | addrL;
 
 	effL = Read(abs);
-
-#ifndef CMOS_INDIRECT_JMP_FIX
-	effH = Read((abs & 0xFF00) + ((abs + 1) & 0x00FF) );
-#else
+	// The 6502 has a bug where the page address doesn't increment. The W65C02S fixes that.
 	effH = Read(abs + 1);
-#endif
-
-	addr = effL + 0x100 * effH;
-
+	addr = effL + (effH << 8);
 	return addr;
 }
 
@@ -1050,7 +1034,14 @@ uint16_t wdc65c02::Addr_ZRPIY()
 
 uint16_t wdc65c02::Addr_ZRPIN()
 {
-	uint16_t addr = (Read(pc++) + Y) & 0xFF;
+	uint16_t zeroL;
+	uint16_t zeroH;
+	uint16_t addr;
+
+	zeroL = Read(pc++);
+	zeroH = (zeroL + 1) & 0xFF;
+	addr = Read(zeroL) + (Read(zeroH) << 8);
+	
 	return addr;
 }
 
