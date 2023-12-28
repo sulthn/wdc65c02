@@ -64,8 +64,22 @@ private:
 	void Op_AND(uint16_t src);
 	void Op_ASL(uint16_t src); 	void Op_ASL_ACC(uint16_t src);
 
-	void Op_BBR(uint16_t src);  // WDC65C02 INSTRUCTION
-	void Op_BBS(uint16_t src);  // WDC65C02 INSTRUCTION
+	void Op_BBR0(uint16_t src);  // W65C02S INSTRUCTIONS
+	void Op_BBR1(uint16_t src);
+	void Op_BBR2(uint16_t src);
+	void Op_BBR3(uint16_t src);
+	void Op_BBR4(uint16_t src);
+	void Op_BBR5(uint16_t src);
+	void Op_BBR6(uint16_t src);
+	void Op_BBR7(uint16_t src);
+	void Op_BBS0(uint16_t src);  // W65C02S INSTRUCTIONS
+	void Op_BBS1(uint16_t src);
+	void Op_BBS2(uint16_t src);
+	void Op_BBS3(uint16_t src);
+	void Op_BBS4(uint16_t src);
+	void Op_BBS5(uint16_t src);
+	void Op_BBS6(uint16_t src);
+	void Op_BBS7(uint16_t src);
 	
 	void Op_BCC(uint16_t src);
 	void Op_BCS(uint16_t src);
@@ -88,11 +102,11 @@ private:
 
 	void Op_CPX(uint16_t src);
 	void Op_CPY(uint16_t src);
-	void Op_DEC(uint16_t src);
+	void Op_DEC(uint16_t src);  void Op_DEC_ACC(uint16_t src);
 	void Op_DEX(uint16_t src);
 	void Op_DEY(uint16_t src);
 	void Op_EOR(uint16_t src);
-	void Op_INC(uint16_t src);
+	void Op_INC(uint16_t src);  void Op_INC_ACC(uint16_t src);
 
 	void Op_INX(uint16_t src);
 	void Op_INY(uint16_t src);
@@ -114,7 +128,16 @@ private:
 	void Op_PLP(uint16_t src);
 	void Op_PLX(uint16_t src);
 	void Op_PLY(uint16_t src);
-	void Op_RMB(uint16_t src);
+	
+	void Op_RMB0(uint16_t src);  // W65C02S INSTRUCTIONS
+	void Op_RMB1(uint16_t src);
+	void Op_RMB2(uint16_t src);
+	void Op_RMB3(uint16_t src);
+	void Op_RMB4(uint16_t src);
+	void Op_RMB5(uint16_t src);
+	void Op_RMB6(uint16_t src);
+	void Op_RMB7(uint16_t src);
+
 	void Op_ROL(uint16_t src); 	void Op_ROL_ACC(uint16_t src);
 	void Op_ROR(uint16_t src);	void Op_ROR_ACC(uint16_t src);
 	
@@ -124,10 +147,18 @@ private:
 	void Op_SEC(uint16_t src);
 	void Op_SED(uint16_t src);
 	void Op_SEI(uint16_t src);
-	void Op_SMB(uint16_t src);
+	
+	void Op_SMB0(uint16_t src);  // W65C02S INSTRUCTIONS
+	void Op_SMB1(uint16_t src);
+	void Op_SMB2(uint16_t src);
+	void Op_SMB3(uint16_t src);
+	void Op_SMB4(uint16_t src);
+	void Op_SMB5(uint16_t src);
+	void Op_SMB6(uint16_t src);
+	void Op_SMB7(uint16_t src);
 
 	void Op_STA(uint16_t src);
-	void Op_STP(uint16_t src);
+	void Op_STP(uint16_t src);  // W65C02S INSTRUCTION
 	void Op_STX(uint16_t src);
 	void Op_STY(uint16_t src);
 	void Op_STZ(uint16_t src);
@@ -140,7 +171,7 @@ private:
 	void Op_TXA(uint16_t src);
 	void Op_TXS(uint16_t src);
 	void Op_TYA(uint16_t src);
-	void Op_WAI(uint16_t src);
+	void Op_WAI(uint16_t src);  // W65C02S INSTRUCTION
 
 	// IRQ, reset, NMI vectors
 	static const uint16_t irqVectorH = 0xFFFF;
