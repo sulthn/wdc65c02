@@ -40,8 +40,6 @@ private:
 
 	void Exec(Instr i);
 
-	bool illegalOpcode;
-
 	// Addressing modes (Arranged according to datasheet)
 	uint16_t Addr_ABSOL(); // ABSOLUTE
 	uint16_t Addr_ABIXN(); // ABSOLUTE INDEXED-X INDIRECT
@@ -85,11 +83,11 @@ private:
 	void Op_BCS(uint16_t src);
 
 	void Op_BEQ(uint16_t src);
-	void Op_BIT(uint16_t src);
+	void Op_BIT(uint16_t src);  void Op_BIT_IMMED(uint16_t src);
 	void Op_BMI(uint16_t src);
 	void Op_BNE(uint16_t src);
 	void Op_BPL(uint16_t src);
-	void Op_BRA(uint16_t src);
+	void Op_BRA(uint16_t src);  // W65C02S INSTRUCTION
 	void Op_BRK(uint16_t src);
 
 	void Op_BVC(uint16_t src);
@@ -121,13 +119,13 @@ private:
 	void Op_ORA(uint16_t src);
 	void Op_PHA(uint16_t src);
 	void Op_PHP(uint16_t src);
-	void Op_PHX(uint16_t src);
-	void Op_PHY(uint16_t src);
+	void Op_PHX(uint16_t src);  // W65C02S INSTRUCTION
+	void Op_PHY(uint16_t src);  // W65C02S INSTRUCTION
 
 	void Op_PLA(uint16_t src);
 	void Op_PLP(uint16_t src);
-	void Op_PLX(uint16_t src);
-	void Op_PLY(uint16_t src);
+	void Op_PLX(uint16_t src);  // W65C02S INSTRUCTION
+	void Op_PLY(uint16_t src);  // W65C02S INSTRUCTION
 	
 	void Op_RMB0(uint16_t src);  // W65C02S INSTRUCTIONS
 	void Op_RMB1(uint16_t src);
@@ -161,12 +159,12 @@ private:
 	void Op_STP(uint16_t src);  // W65C02S INSTRUCTION
 	void Op_STX(uint16_t src);
 	void Op_STY(uint16_t src);
-	void Op_STZ(uint16_t src);
+	void Op_STZ(uint16_t src);  // W65C02S INSTRUCTION
 	void Op_TAX(uint16_t src);
 	void Op_TAY(uint16_t src);
 
-	void Op_TRB(uint16_t src);
-	void Op_TSB(uint16_t src);
+	void Op_TRB(uint16_t src);  // W65C02S INSTRUCTION
+	void Op_TSB(uint16_t src);  // W65C02S INSTRUCTION
 	void Op_TSX(uint16_t src);
 	void Op_TXA(uint16_t src);
 	void Op_TXS(uint16_t src);
@@ -181,6 +179,9 @@ private:
 	static const uint16_t nmiVectorH = 0xFFFB;
 	static const uint16_t nmiVectorL = 0xFFFA;
 
+	// STP, WAI
+	uint8_t STOP; // BIT 0 = STP, BIT 1 = WAI
+
 	// read/write callbacks
 	typedef void (*BusWrite)(uint16_t, uint8_t);
 	typedef uint8_t (*BusRead)(uint16_t);
@@ -190,6 +191,7 @@ private:
 	// stack operations
 	inline void StackPush(uint8_t byte);
 	inline uint8_t StackPop();
+
 
 public:
 	enum CycleMethod {
@@ -211,6 +213,14 @@ public:
     uint8_t GetA();
     uint8_t GetX();
     uint8_t GetY();
+	uint8_t GetSTOP();
+
+	void SetPC(uint16_t address);
+	void SetS(uint8_t value);
+	void SetP(uint8_t value);
+	void SetA(uint8_t value);
+	void SetX(uint8_t value);
+	void SetY(uint8_t value);
 
     void SetResetS(uint8_t value);
     void SetResetP(uint8_t value);

@@ -35,6 +35,7 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
     , reset_Y(0x00)
     , reset_sp(0xFD)
     , reset_status(CONSTANT)
+	, STOP(0x00)
 {
 	Write = (BusWrite)w;
 	Read = (BusRead)r;
@@ -45,13 +46,47 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 
 	Instr instr;
 	// fill jump table with NOPs
-	instr.addr = &wdc65c02::Addr_IMPLI;
+	// 0x_3 and 0x_B
 	instr.code = &wdc65c02::Op_NOP;
+	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.cycles = 1;
 	for(int i = 0; i < 256; i++)
 	{
 		InstrTable[i] = instr;
 	}
+
+	// 0x_2
+	instr.addr = &wdc65c02::Addr_IMMED;
+	instr.cycles = 2;
+	for (int i = 0; i < 0x10; i++) 
+	{
+		InstrTable[(i << 4) + 0x02] = instr;
+	}
+
+	// 0x_4
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.cycles = 4;
+	for (int i = 0; i < 0x10; i++) 
+	{
+		InstrTable[(i << 4) + 0x04] = instr;
+	}
+
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.cycles = 3;
+	InstrTable[0x44] = instr;
+
+	// 0x_C
+	instr.addr = &wdc65c02::Addr_ABSIX;
+	instr.cycles = 4;
+	for (int i = 0; i < 0x10; i++) 
+	{
+		InstrTable[(i << 4) + 0x0c] = instr;
+	}
+
+	instr.addr = &wdc65c02::Addr_ABSOL;
+	instr.cycles = 8;
+	InstrTable[0x5C] = instr;
+
 
 	// insert opcodes
 
@@ -150,6 +185,44 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.cycles = 6;
 	InstrTable[0x16] = instr;
 
+	// BBR (NEW INSTRUCTION)
+	instr.addr = &wdc65c02::Addr_ZEROP; // ZERO PAGE, RELATIVE
+	instr.cycles = 4;
+	instr.code = &wdc65c02::Op_BBR0;
+	InstrTable[0x0F] = instr;
+	instr.code = &wdc65c02::Op_BBR1;
+	InstrTable[0x1F] = instr;
+	instr.code = &wdc65c02::Op_BBR2;
+	InstrTable[0x2F] = instr;
+	instr.code = &wdc65c02::Op_BBR3;
+	InstrTable[0x3F] = instr;
+	instr.code = &wdc65c02::Op_BBR4;
+	InstrTable[0x4F] = instr;
+	instr.code = &wdc65c02::Op_BBR5;
+	InstrTable[0x5F] = instr;
+	instr.code = &wdc65c02::Op_BBR6;
+	InstrTable[0x6F] = instr;
+	instr.code = &wdc65c02::Op_BBR7;
+	InstrTable[0x7F] = instr;
+
+	// BBS (NEW INSTRUCTION)
+	instr.code = &wdc65c02::Op_BBS0;
+	InstrTable[0x8F] = instr;
+	instr.code = &wdc65c02::Op_BBS1;
+	InstrTable[0x9F] = instr;
+	instr.code = &wdc65c02::Op_BBS2;
+	InstrTable[0xAF] = instr;
+	instr.code = &wdc65c02::Op_BBS3;
+	InstrTable[0xBF] = instr;
+	instr.code = &wdc65c02::Op_BBS4;
+	InstrTable[0xCf] = instr;
+	instr.code = &wdc65c02::Op_BBS5;
+	InstrTable[0xDF] = instr;
+	instr.code = &wdc65c02::Op_BBS6;
+	InstrTable[0xEF] = instr;
+	instr.code = &wdc65c02::Op_BBS7;
+	InstrTable[0xFF] = instr;
+
 	instr.addr = &wdc65c02::Addr_RELAT;
 	instr.code = &wdc65c02::Op_BCC;
 	instr.cycles = 2;
@@ -174,7 +247,7 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.cycles = 4;
 	InstrTable[0x3C] = instr; // New adressing mode
 	instr.addr = &wdc65c02::Addr_IMMED;
-	instr.code = &wdc65c02::Op_BIT;
+	instr.code = &wdc65c02::Op_BIT_IMMED;
 	instr.cycles = 2;
 	InstrTable[0x89] = instr; // New adressing mode
 	instr.addr = &wdc65c02::Addr_ZEROP;
@@ -200,6 +273,11 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_BPL;
 	instr.cycles = 2;
 	InstrTable[0x10] = instr;
+
+	instr.addr = &wdc65c02::Addr_RELAT;
+	instr.code = &wdc65c02::Op_BRA;  // NEW INSTRUCTION
+	instr.cycles = 3;
+	InstrTable[0x80] = instr;
 
 	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.code = &wdc65c02::Op_BRK;
@@ -402,7 +480,7 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_JMP;
 	instr.cycles = 3;
 	InstrTable[0x4C] = instr;
-	instr.addr = &wdc65c02::Addr_ABSIX;
+	instr.addr = &wdc65c02::Addr_ABIXN;
 	instr.code = &wdc65c02::Op_JMP;
 	instr.cycles = 6;
 	InstrTable[0x7C] = instr; // New adressing mode
@@ -569,6 +647,16 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	InstrTable[0x08] = instr;
 
 	instr.addr = &wdc65c02::Addr_IMPLI;
+	instr.code = &wdc65c02::Op_PHX;
+	instr.cycles = 3;
+	InstrTable[0xDA] = instr;
+
+	instr.addr = &wdc65c02::Addr_IMPLI;
+	instr.code = &wdc65c02::Op_PHY;
+	instr.cycles = 3;
+	InstrTable[0x5A] = instr;
+
+	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.code = &wdc65c02::Op_PLA;
 	instr.cycles = 4;
 	InstrTable[0x68] = instr;
@@ -577,6 +665,36 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_PLP;
 	instr.cycles = 4;
 	InstrTable[0x28] = instr;
+
+	instr.addr = &wdc65c02::Addr_IMPLI;
+	instr.code = &wdc65c02::Op_PLX;  // NEW INSTRUCTION
+	instr.cycles = 4;
+	InstrTable[0xFA] = instr;
+
+	instr.addr = &wdc65c02::Addr_IMPLI;
+	instr.code = &wdc65c02::Op_PLY;  // NEW INSTRUCTION
+	instr.cycles = 4;
+	InstrTable[0x7A] = instr;
+
+	// RMB (NEW INSTRUCTION)
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.cycles = 5;
+	instr.code = &wdc65c02::Op_RMB0;
+	InstrTable[0x07] = instr;
+	instr.code = &wdc65c02::Op_RMB1;
+	InstrTable[0x17] = instr;
+	instr.code = &wdc65c02::Op_RMB2;
+	InstrTable[0x27] = instr;
+	instr.code = &wdc65c02::Op_RMB3;
+	InstrTable[0x37] = instr;
+	instr.code = &wdc65c02::Op_RMB4;
+	InstrTable[0x47] = instr;
+	instr.code = &wdc65c02::Op_RMB5;
+	InstrTable[0x57] = instr;
+	instr.code = &wdc65c02::Op_RMB6;
+	InstrTable[0x67] = instr;
+	instr.code = &wdc65c02::Op_RMB7;
+	InstrTable[0x77] = instr;
 
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_ROL;
@@ -682,13 +800,33 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.cycles = 2;
 	InstrTable[0x78] = instr;
 
+	// SMB (NEW INSTRUCTION)
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.cycles = 5;
+	instr.code = &wdc65c02::Op_SMB0;
+	InstrTable[0x87] = instr;
+	instr.code = &wdc65c02::Op_SMB1;
+	InstrTable[0x97] = instr;
+	instr.code = &wdc65c02::Op_SMB2;
+	InstrTable[0xA7] = instr;
+	instr.code = &wdc65c02::Op_SMB3;
+	InstrTable[0xB7] = instr;
+	instr.code = &wdc65c02::Op_SMB4;
+	InstrTable[0xC7] = instr;
+	instr.code = &wdc65c02::Op_SMB5;
+	InstrTable[0xD7] = instr;
+	instr.code = &wdc65c02::Op_SMB6;
+	InstrTable[0xE7] = instr;
+	instr.code = &wdc65c02::Op_SMB7;
+	InstrTable[0xF7] = instr;
+
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_STA;
 	instr.cycles = 4;
 	InstrTable[0x8D] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIX;
 	instr.code = &wdc65c02::Op_STA;
-	instr.cycles = 5;
+	instr.cycles = 6;
 	InstrTable[0x9D] = instr;
 	instr.addr = &wdc65c02::Addr_ABSIY;
 	instr.code = &wdc65c02::Op_STA;
@@ -714,6 +852,11 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_STA;
 	instr.cycles = 6;
 	InstrTable[0x91] = instr;
+
+	instr.addr = &wdc65c02::Addr_IMPLI;
+	instr.code = &wdc65c02::Op_STP;  // NEW INSTRUCTION
+	instr.cycles = 2;
+	InstrTable[0xDB] = instr;
 
 	instr.addr = &wdc65c02::Addr_ABSOL;
 	instr.code = &wdc65c02::Op_STX;
@@ -741,6 +884,23 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.cycles = 4;
 	InstrTable[0x94] = instr;
 
+	instr.addr = &wdc65c02::Addr_ABSOL;
+	instr.code = &wdc65c02::Op_STZ;  // NEW INSTRUCTION
+	instr.cycles = 5;
+	InstrTable[0x9C] = instr;
+	instr.addr = &wdc65c02::Addr_ABSIX;
+	instr.code = &wdc65c02::Op_STZ;
+	instr.cycles = 6;
+	InstrTable[0x9E] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_STZ;
+	instr.cycles = 4;
+	InstrTable[0x64] = instr;
+	instr.addr = &wdc65c02::Addr_ZRPIX;
+	instr.code = &wdc65c02::Op_STZ;
+	instr.cycles = 5;
+	InstrTable[0x74] = instr;
+
 	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.code = &wdc65c02::Op_TAX;
 	instr.cycles = 2;
@@ -750,6 +910,24 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.code = &wdc65c02::Op_TAY;
 	instr.cycles = 2;
 	InstrTable[0xA8] = instr;
+
+	instr.addr = &wdc65c02::Addr_ABSOL;
+	instr.code = &wdc65c02::Op_TRB;  // NEW INSTRUCTION
+	instr.cycles = 6;
+	InstrTable[0x1C] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_TRB;
+	instr.cycles = 5;
+	InstrTable[0x14] = instr;
+
+	instr.addr = &wdc65c02::Addr_ABSOL;
+	instr.code = &wdc65c02::Op_TSB;  // NEW INSTRUCTION
+	instr.cycles = 6;
+	InstrTable[0x0C] = instr;
+	instr.addr = &wdc65c02::Addr_ZEROP;
+	instr.code = &wdc65c02::Op_TSB;
+	instr.cycles = 5;
+	InstrTable[0x04] = instr;
 
 	instr.addr = &wdc65c02::Addr_IMPLI;
 	instr.code = &wdc65c02::Op_TSX;
@@ -766,6 +944,16 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 	instr.cycles = 2;
 	InstrTable[0x9A] = instr;
 
+	instr.addr = &wdc65c02::Addr_IMPLI;
+	instr.code = &wdc65c02::Op_TYA;
+	instr.cycles = 2;
+	InstrTable[0x98] = instr;
+
+	instr.addr = &wdc65c02::Addr_IMPLI;
+	instr.code = &wdc65c02::Op_WAI;  // NEW INSTRUCTION
+	instr.cycles = 5;
+	InstrTable[0xCB] = instr;
+
 	return;
 }
 
@@ -774,6 +962,8 @@ wdc65c02::wdc65c02(BusRead r, BusWrite w)
 
 void wdc65c02::Reset()
 {
+	STOP = 0;
+
 	A = reset_A;
 	Y = reset_Y;
 	X = reset_X;
@@ -786,8 +976,6 @@ void wdc65c02::Reset()
 	sp = reset_sp;
 
 	status = reset_status | CONSTANT | BREAK;
-
-	illegalOpcode = false;
 
 	return;
 }
@@ -808,6 +996,11 @@ uint8_t wdc65c02::StackPop()
 
 void wdc65c02::IRQ()
 {
+	if (STOP & 0b01) return;
+	if (STOP & 0b10) {
+		STOP &= 0b11111101;
+		pc++;
+	}
 	if(!IF_INTERRUPT())
 	{
 		//SET_BREAK(0);
@@ -815,6 +1008,7 @@ void wdc65c02::IRQ()
 		StackPush(pc & 0xFF);
 		StackPush((status & ~BREAK) | CONSTANT);
 		SET_INTERRUPT(1);
+		SET_DECIMAL(0);
 
 		// load PC from reset vector
 		uint8_t pcl = Read(irqVectorL);
@@ -826,11 +1020,17 @@ void wdc65c02::IRQ()
 
 void wdc65c02::NMI()
 {
+	if (STOP & 0b01) return;
+	if (STOP & 0b10) {
+		STOP &= 0b11111101;
+		pc++;
+	}
 	//SET_BREAK(0);
 	StackPush((pc >> 8) & 0xFF);
 	StackPush(pc & 0xFF);
 	StackPush((status & ~BREAK) | CONSTANT);
 	SET_INTERRUPT(1);
+	SET_DECIMAL(0);
 
 	// load PC from reset vector
 	uint8_t pcl = Read(nmiVectorL);
@@ -847,7 +1047,7 @@ void wdc65c02::Run(
 	uint8_t opcode;
 	Instr instr;
 
-	while(cyclesRemaining > 0 && !illegalOpcode)
+	while(cyclesRemaining > 0 && !STOP)
 	{
 		// fetch
 		opcode = Read(pc++);
@@ -898,6 +1098,35 @@ uint8_t wdc65c02::GetX()
 uint8_t wdc65c02::GetY()
 {
     return Y;
+}
+
+uint8_t wdc65c02::GetSTOP()
+{
+    return STOP;
+}
+
+void wdc65c02::SetPC(uint16_t address) {
+	pc = address;
+}
+
+void wdc65c02::SetS(uint8_t value) {
+	sp = value;
+}
+
+void wdc65c02::SetP(uint8_t value) {
+	status = value | CONSTANT | BREAK;
+}
+
+void wdc65c02::SetA(uint8_t value) {
+	A = value;
+}
+
+void wdc65c02::SetX(uint8_t value) {
+	X = value;
+}
+
+void wdc65c02::SetY(uint8_t value) {
+	Y = value;
 }
 
 void wdc65c02::SetResetS(uint8_t value)
@@ -1125,12 +1354,13 @@ void wdc65c02::Op_ADC(uint16_t src)
 	if (IF_DECIMAL())
 	{
 		if (((A & 0xF) + (m & 0xF) + (IF_CARRY() ? 1 : 0)) > 9) tmp += 6;
-		SET_NEGATIVE(tmp & 0x80);
 		SET_OVERFLOW(!((A ^ m) & 0x80) && ((A ^ tmp) & 0x80));
 		if (tmp > 0x99)
 		{
 			tmp += 96;
 		}
+		SET_ZERO(!(tmp & 0xFF));
+		SET_NEGATIVE(tmp & 0x80);
 		SET_CARRY(tmp > 0x99);
 	}
 	else
@@ -1153,7 +1383,6 @@ void wdc65c02::Op_AND(uint16_t src)
 	A = res;
 	return;
 }
-
 
 void wdc65c02::Op_ASL(uint16_t src)
 {
@@ -1179,6 +1408,253 @@ void wdc65c02::Op_ASL_ACC(uint16_t src)
 	return;
 }
 
+
+// BRANCH ON BIT RESET INSTRUCTIONS
+
+void wdc65c02::Op_BBR0(uint16_t src)
+{
+	uint16_t offset;
+
+	if (~Read(src) & 0b00000001)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBR1(uint16_t src)
+{
+	uint16_t offset;
+
+	if (~Read(src) & 0b00000010)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBR2(uint16_t src)
+{
+	uint16_t offset;
+
+	if (~Read(src) & 0b00000100)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBR3(uint16_t src)
+{
+	uint16_t offset;
+
+	if (~Read(src) & 0b00001000)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBR4(uint16_t src)
+{
+	uint16_t offset;
+
+	if (~Read(src) & 0b00010000)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBR5(uint16_t src)
+{
+	uint16_t offset;
+
+	if (~Read(src) & 0b00100000)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBR6(uint16_t src)
+{
+	uint16_t offset;
+
+	if (~Read(src) & 0b01000000)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBR7(uint16_t src)
+{
+	uint16_t offset;
+
+	if (~Read(src) & 0b10000000)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+
+// BRANCH ON BIT SET INSTRUCTIONS
+
+void wdc65c02::Op_BBS0(uint16_t src)
+{
+	uint16_t offset;
+
+	if (Read(src) & 0b00000001)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBS1(uint16_t src)
+{
+	uint16_t offset;
+
+	if (Read(src) & 0b00000010)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBS2(uint16_t src)
+{
+	uint16_t offset;
+
+	if (Read(src) & 0b00000100)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBS3(uint16_t src)
+{
+	uint16_t offset;
+
+	if (Read(src) & 0b00001000)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBS4(uint16_t src)
+{
+	uint16_t offset;
+
+	if (Read(src) & 0b00010000)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBS5(uint16_t src)
+{
+	uint16_t offset;
+
+	if (Read(src) & 0b00100000)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBS6(uint16_t src)
+{
+	uint16_t offset;
+
+	if (Read(src) & 0b01000000)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+void wdc65c02::Op_BBS7(uint16_t src)
+{
+	uint16_t offset;
+
+	if (Read(src) & 0b10000000)
+	{
+		offset = (uint16_t)Read(pc++);
+		if (offset & 0x80) offset |= 0xFF00;
+		pc += (int16_t)offset;  // RELATIVE
+	} else {
+		pc++;
+	}
+	return;
+}
+
+
 void wdc65c02::Op_BCC(uint16_t src)
 {
 	if (!IF_CARRY())
@@ -1187,7 +1663,6 @@ void wdc65c02::Op_BCC(uint16_t src)
 	}
 	return;
 }
-
 
 void wdc65c02::Op_BCS(uint16_t src)
 {
@@ -1213,6 +1688,13 @@ void wdc65c02::Op_BIT(uint16_t src)
 	uint8_t res = m & A;
 	SET_NEGATIVE(res & 0x80);
 	status = (status & 0x3F) | (uint8_t)(m & 0xC0) | CONSTANT | BREAK;
+	SET_ZERO(!res);
+	return;
+}
+
+void wdc65c02::Op_BIT_IMMED(uint16_t src) {
+	uint8_t m = Read(src);
+	uint8_t res = m & A;
 	SET_ZERO(!res);
 	return;
 }
@@ -1244,6 +1726,15 @@ void wdc65c02::Op_BPL(uint16_t src)
 	return;
 }
 
+void wdc65c02::Op_BRA(uint16_t src)
+{
+	if (1 == 1)
+	{
+		pc = src;
+	}
+	return;
+}
+
 void wdc65c02::Op_BRK(uint16_t src)
 {
 	pc++;
@@ -1251,6 +1742,7 @@ void wdc65c02::Op_BRK(uint16_t src)
 	StackPush(pc & 0xFF);
 	StackPush(status | CONSTANT | BREAK);
 	SET_INTERRUPT(1);
+	SET_DECIMAL(0);
 	pc = (Read(irqVectorH) << 8) + Read(irqVectorL);
 	return;
 }
@@ -1492,6 +1984,18 @@ void wdc65c02::Op_PHP(uint16_t src)
 	return;
 }
 
+void wdc65c02::Op_PHX(uint16_t src)
+{
+	StackPush(X);
+	return;
+}
+
+void wdc65c02::Op_PHY(uint16_t src)
+{
+	StackPush(Y);
+	return;
+}
+
 void wdc65c02::Op_PLA(uint16_t src)
 {
 	A = StackPop();
@@ -1504,6 +2008,96 @@ void wdc65c02::Op_PLP(uint16_t src)
 {
 	status = StackPop() | CONSTANT | BREAK;
 	//SET_CONSTANT(1);
+	return;
+}
+
+void wdc65c02::Op_PLX(uint16_t src)
+{
+	X = StackPop();
+	SET_NEGATIVE(X & 0x80);
+	SET_ZERO(!X);
+	return;
+}
+
+void wdc65c02::Op_PLY(uint16_t src)
+{
+	Y = StackPop();
+	SET_NEGATIVE(Y & 0x80);
+	SET_ZERO(!Y);
+	return;
+}
+
+// RESET MEMORY BIT INSTRUCTIONS
+
+void wdc65c02::Op_RMB0(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m &= 0b11111110;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_RMB1(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m &= 0b11111101;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_RMB2(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m &= 0b11111011;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_RMB3(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m &= 0b11110111;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_RMB4(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m &= 0b11101111;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_RMB5(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m &= 0b11011111;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_RMB6(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m &= 0b10111111;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_RMB7(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m &= 0b01111111;
+	Write(src, m);
+
 	return;
 }
 
@@ -1598,6 +2192,8 @@ void wdc65c02::Op_SBC(uint16_t src)
 		{
 			tmp -= 0x60;
 		}
+		SET_NEGATIVE(tmp & 0x80);
+		SET_ZERO(!(tmp & 0xFF));
 	}
 	SET_CARRY(tmp < 0x100);
 	A = (tmp & 0xFF);
@@ -1622,9 +2218,91 @@ void wdc65c02::Op_SEI(uint16_t src)
 	return;
 }
 
+// SET MEMORY BIT INSTRUCTIONS
+
+void wdc65c02::Op_SMB0(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m |= 0b00000001;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_SMB1(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m |= 0b00000010;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_SMB2(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m |= 0b00000100;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_SMB3(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m |= 0b00001000;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_SMB4(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m |= 0b00010000;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_SMB5(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m |= 0b00100000;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_SMB6(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m |= 0b01000000;
+	Write(src, m);
+
+	return;
+}
+
+void wdc65c02::Op_SMB7(uint16_t src)
+{
+	uint8_t m = Read(src);
+	m |= 0b10000000;
+	Write(src, m);
+
+	return;
+}
+
+
 void wdc65c02::Op_STA(uint16_t src)
 {
 	Write(src, A);
+	return;
+}
+
+void wdc65c02::Op_STP(uint16_t src)
+{
+	STOP |= 0b00000001;
+	pc--;
 	return;
 }
 
@@ -1637,6 +2315,12 @@ void wdc65c02::Op_STX(uint16_t src)
 void wdc65c02::Op_STY(uint16_t src)
 {
 	Write(src, Y);
+	return;
+}
+
+void wdc65c02::Op_STZ(uint16_t src)
+{
+	Write(src, 0);
 	return;
 }
 
@@ -1655,6 +2339,24 @@ void wdc65c02::Op_TAY(uint16_t src)
 	SET_NEGATIVE(m & 0x80);
 	SET_ZERO(!m);
 	Y = m;
+	return;
+}
+
+void wdc65c02::Op_TRB(uint16_t src)
+{
+	uint16_t m = Read(src);
+	SET_ZERO(!(A & m));
+	Write(src, ~A & m);
+
+	return;
+}
+
+void wdc65c02::Op_TSB(uint16_t src)
+{
+	uint16_t m = Read(src);
+	SET_ZERO(!(A & m));
+	Write(src, A | m);
+
 	return;
 }
 
@@ -1688,5 +2390,12 @@ void wdc65c02::Op_TYA(uint16_t src)
 	SET_NEGATIVE(m & 0x80);
 	SET_ZERO(!m);
 	A = m;
+	return;
+}
+
+void wdc65c02::Op_WAI(uint16_t src)
+{
+	STOP |= 0b00000010;
+	pc--;
 	return;
 }

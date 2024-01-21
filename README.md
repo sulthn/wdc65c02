@@ -2,55 +2,59 @@
 Based on https://github.com/gianlucag/mos6502 to be used on my 6502 Emulator on the Casio FX-CG50 :) \
 soon...
 
-# Copied from original repo:
-
 ## Emulator features ##
 
-My project is a simple jump-table based emulator: the actual value of the opcode (let's say 0x80) is used to address a function pointer table, each entry of such table is a C++ function which emulates the behavior of the corresponding real instruction. 
-
-All the 13 addressing modes are emulated:
+### Addressing Modes ###
 
 ```
-// addressing modes
+// Addressing modes (Arranged according to datasheet)
+uint16_t Addr_ABSOL(); // ABSOLUTE
+uint16_t Addr_ABIXN(); // ABSOLUTE INDEXED-X INDIRECT
+uint16_t Addr_ABSIX(); // ABSOLUTE INDEXED-X
+uint16_t Addr_ABSIY(); // ABSOLUTE INDEXED-Y
+uint16_t Addr_ABSIN(); // ABSOLUTE INDIRECT
 uint16_t Addr_ACCUM(); // ACCUMULATOR
 uint16_t Addr_IMMED(); // IMMEDIATE
-uint16_t Addr_ABSOL(); // ABSOLUTE
-uint16_t Addr_ZEROP(); // ZERO PAGE
-uint16_t Addr_ZRPIX(); // INDEXED-X ZERO PAGE
-uint16_t Addr_ZRPIY(); // INDEXED-Y ZERO PAGE
-uint16_t Addr_ABSIX(); // INDEXED-X ABSOLUTE
-uint16_t Addr_ABSIY(); // INDEXED-Y ABSOLUTE
 uint16_t Addr_IMPLI(); // IMPLIED
 uint16_t Addr_RELAT(); // RELATIVE
-uint16_t Addr_ZPIXN(); // INDEXED-X INDIRECT
-uint16_t Addr_ZPINY(); // INDEXED-Y INDIRECT
-uint16_t Addr_ABSIN(); // ABSOLUTE INDIRECT
+uint16_t Addr_ZEROP(); // ZERO PAGE
+uint16_t Addr_ZPIXN(); // ZERO PAGE INDEXED-X INDIRECT
+uint16_t Addr_ZRPIX(); // ZERO PAGE INDEXED-X
+uint16_t Addr_ZRPIY(); // ZERO PAGE INDEXED-Y
+uint16_t Addr_ZRPIN(); // ZERO PAGE INDIRECT
+uint16_t Addr_ZPINY(); // ZERO PAGE INDIRECT INDEXED-Y
 ```
-
-All the 151 opcodes are emulated. Since the 6502 CPU uses 8 bit to encode the opcode value it also has a lot of "illegal opcodes" (i.e. opcode values other than the designed 151). Such opcodes perform weird operations, write multiple registers at the same time, sometimes are the combination of two or more "valid" opcodes. Such illegals were used to enforce software copy protection or to discover the exact CPU type. 
-
-The illegals are not supported yet, so instead a simple NOP is executed.
-
 
 ## Inner main loop ##
 
 It's a classic fetch-decode-execute loop:
 
 ```
-while(start + n > cycles && !illegalOpcode)
+while(cyclesRemaining > 0 && !STOP)
 {
 	// fetch
 	opcode = Read(pc++);
-	
+
 	// decode
 	instr = InstrTable[opcode];
-		
+
 	// execute
 	Exec(instr);
+	cycleCount += instr.cycles;
+	cyclesRemaining -=
+		cycleMethod == CYCLE_COUNT        ? instr.cycles
+		/* cycleMethod == INST_COUNT */   : 1;
 }
 ```
 
-The next instruction (the opcode value) is retrieved from memory. Then it's decoded (i.e. the opcode is used to address the instruction table) and the resulting code block is executed.   
+The next instruction (the opcode value) is retrieved from memory. Then it's decoded (i.e. the opcode is used to address the instruction table) and the resulting code block is executed.
+
+### STOP (STP and WAI) ###
+- When WAI is executed the second bit of STOP is set
+- When STP is executed the first bit of STOP is set
+- When STOP is non-zero the emulator won't proceed
+- IRQ, NMI and RESET will clear the first bit
+- RESET clears the second bit
 
 
 ## Public methods ##
@@ -62,7 +66,36 @@ wdc65c02(BusRead r, BusWrite w);
 void NMI();
 void IRQ();
 void Reset();
-void Run(uint32_t n);
+void Run(
+	int32_t cycles,
+	uint64_t& cycleCount,
+	CycleMethod cycleMethod = CYCLE_COUNT);
+
+uint16_t GetPC();
+uint8_t GetS();
+uint8_t GetP();
+uint8_t GetA();
+uint8_t GetX();
+uint8_t GetY();
+uint8_t GetSTOP();
+
+void SetPC(uint16_t address);
+void SetS(uint8_t value);
+void SetP(uint8_t value);
+void SetA(uint8_t value);
+void SetX(uint8_t value);
+void SetY(uint8_t value);
+
+void SetResetS(uint8_t value);
+void SetResetP(uint8_t value);
+void SetResetA(uint8_t value);
+void SetResetX(uint8_t value);
+void SetResetY(uint8_t value);
+uint8_t GetResetS();
+uint8_t GetResetP();
+uint8_t GetResetA();
+uint8_t GetResetX();
+uint8_t GetResetY();
 ```
 
 
@@ -81,7 +114,7 @@ respectively to read/write from/to a memory location (16 bit address, 8 bit valu
 void NMI();
 ```
 
-triggers a Non-Mascherable Interrupt request, as done by the external pin of the real chip
+triggers a Non-Maskable Interrupt request, as done by the external pin of the real chip
 
 ```
 void IRQ();
@@ -93,13 +126,16 @@ triggers an Interrupt ReQuest, as done by the external pin of the real chip
 void Reset();
 ```
 
-performs an hardware reset, as done by the external pin of the real chip
+performs a hardware reset, as done by the external pin of the real chip
 
 ```
-void Run(uint32_t n);
+void Run(
+	int32_t cycles,
+	uint64_t& cycleCount,
+	CycleMethod cycleMethod = CYCLE_COUNT);
 ```
 
-It runs the CPU for the next 'n' machine instructions.
+runs the CPU for the next 'n' machine instructions.
 
 ## Links ##
 
@@ -112,8 +148,6 @@ http://www.6502.org/documents/datasheets/mos/
 http://www.mdawson.net/vic20chrome/cpu/mos_6500_mpu_preliminary_may_1976.pdf
 
 http://rubbermallet.org/fake6502.c
-
-## Links i added ##
 
 http://6502.org/tutorials/65c02opcodes.html#8
 
