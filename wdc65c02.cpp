@@ -1010,7 +1010,7 @@ void wdc65c02::IRQ()
 		SET_INTERRUPT(1);
 		SET_DECIMAL(0);
 
-		// load PC from reset vector
+		// load PC from irq vector
 		uint8_t pcl = Read(irqVectorL);
 		uint8_t pch = Read(irqVectorH);
 		pc = (pch << 8) + pcl;
@@ -1032,7 +1032,7 @@ void wdc65c02::NMI()
 	SET_INTERRUPT(1);
 	SET_DECIMAL(0);
 
-	// load PC from reset vector
+	// load PC from NMI vector
 	uint8_t pcl = Read(nmiVectorL);
 	uint8_t pch = Read(nmiVectorH);
 	pc = (pch << 8) + pcl;
